@@ -9,11 +9,17 @@
       <PackageReference Include="MediatR" Version="9.0.0" />
       <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="User\Commands\Create" />
+      <Folder Include="User\Commands\Delete" />
+      <Folder Include="User\Commands\Update" />
+      <Folder Include="User\Queries\GetAll" />
     </ItemGroup>
 
 </Project>

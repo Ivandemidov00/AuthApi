@@ -8,7 +8,7 @@ namespace Application.Interfases
 {
     public interface IUserDBContext
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<Domain.User> Users { get; set; }
         Task<Int32> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
