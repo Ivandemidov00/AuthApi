@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Persistence;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace WebApi
 {
@@ -20,6 +22,16 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(optinos =>
+            {
+                optinos.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Description = "Demo Swagger API v1",
+                        Title = "Swagger with IdentityServer4",
+                        Version = "1.0.0"
+                    });
+                  
+            });
             services.AddAutoMapper(config =>
             {
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
@@ -63,7 +75,14 @@ namespace WebApi
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
-
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json","swagger");
+                options.DocumentTitle = "Title";
+                options.RoutePrefix = "docs";
+                options.DocExpansion(DocExpansion.List);
+            });
 
             app.UseAuthorization();
             
