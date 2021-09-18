@@ -37,7 +37,7 @@ namespace WebApi
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
                 config.AddProfile(new AssemblyMappingProfile(typeof(IUserDBContext).Assembly));
             });
-
+            
             services.AddApplication();
             services.AddPersistence(Configuration);
             services.AddControllers();
@@ -83,7 +83,8 @@ namespace WebApi
                 options.RoutePrefix = "docs";
                 options.DocExpansion(DocExpansion.List);
             });
-
+        
+            app.UseAuthentication();
             app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>
