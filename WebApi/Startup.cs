@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Application;
 using Application.Common.Mappings;
 using Application.Interfases;
+using IdentityServer4.AccessTokenValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,16 +26,47 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(optinos =>
+            services.AddSwaggerGen(options =>
             {
-                optinos.SwaggerDoc("v1", new OpenApiInfo
+                options.SwaggerDoc("v1", new OpenApiInfo
                     {
                         Description = "Demo Swagger API v1",
                         Title = "Swagger with IdentityServer4",
                         Version = "1.0.0"
                     });
-                  
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+                    In = ParameterLocation.Header, 
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey 
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    { 
+                        new OpenApiSecurityScheme 
+                        { 
+                            Reference = new OpenApiReference 
+                            { 
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer" 
+                            } 
+                        },
+                        new string[] { } 
+                    } 
+                });
             });
+            services.AddAuthentication(config =>
+                {
+                    config.DefaultAuthenticateScheme =
+                        JwtBearerDefaults.AuthenticationScheme;
+                    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:44386/";
+                    options.Audience = "NotesWebAPI";
+                    options.RequireHttpsMetadata = false;
+                });
+
             services.AddAutoMapper(config =>
             {
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
@@ -82,6 +117,9 @@ namespace WebApi
                 options.DocumentTitle = "Title";
                 options.RoutePrefix = "docs";
                 options.DocExpansion(DocExpansion.List);
+                options.OAuthClientId("client_id_swagger");
+                options.OAuthScopeSeparator(" ");
+                options.OAuthClientSecret("client_secret_swagger");
             });
         
             app.UseAuthentication();

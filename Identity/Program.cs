@@ -24,7 +24,7 @@ namespace Identity
                     var context = serviceProvider.GetRequiredService<AuthDbContext>();
                     DbInitializer.Initialize(context);
                 }
-                catch (Exception exception)
+                catch (System.Exception exception)
                 {
                     var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                     logger.LogError(exception, "An error occurred while app initialization");
